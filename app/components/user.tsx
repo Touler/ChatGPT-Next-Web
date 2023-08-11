@@ -4,7 +4,7 @@ require("../polyfill");
 
 import { useState, useEffect } from "react";
 
-import styles from "./home.module.scss";
+import styles from "./user.module.scss";
 
 import BotIcon from "../icons/bot.svg";
 import LoadingIcon from "../icons/three-dots.svg";
@@ -26,8 +26,6 @@ import {
 import { SideBar } from "./sidebar";
 import { useAppConfig } from "../store/config";
 import { AuthPage } from "./auth";
-import { LoginPage } from "./login";
-import { RegisterPage } from "./register";
 import { getClientConfig } from "../config/client";
 import { api } from "../client/api";
 import { useAccessStore } from "../store";
@@ -44,9 +42,9 @@ export function Loading(props: { noLogo?: boolean }) {
 const Settings = dynamic(async () => (await import("./settings")).Settings, {
   loading: () => <Loading noLogo />,
 });
-// const Login = dynamic(async () => (await import("./login")).Login, {
-//   loading: () => <Loading noLogo />,
-// });
+const Login = dynamic(async () => (await import("./login")).Login, {
+  loading: () => <Loading noLogo />,
+});
 
 const Chat = dynamic(async () => (await import("./chat")).Chat, {
   loading: () => <Loading noLogo />,
@@ -118,50 +116,11 @@ function Screen() {
   const location = useLocation();
   const isHome = location.pathname === Path.Home;
   const isAuth = location.pathname === Path.Auth;
-  const isLogin = location.pathname === Path.Login;
-  const isRegister = location.pathname === Path.Register;
   const isMobileScreen = useMobileScreen();
 
   useEffect(() => {
     loadAsyncGoogleFont();
   }, []);
-  if(isRegister){
-    return (
-        <div
-            className={
-              styles.container +
-              ` ${
-                  config.tightBorder && !isMobileScreen
-                      ? styles["tight-container"]
-                      : styles.container
-              } ${getLang() === "ar" ? styles["rtl-screen"] : ""}`
-            }
-        >
-          <>
-            <RegisterPage />
-          </>
-        </div>
-    );
-  }
-
-  if(isLogin){
-    return (
-        <div
-            className={
-              styles.container +
-              ` ${
-                  config.tightBorder && !isMobileScreen
-                      ? styles["tight-container"]
-                      : styles.container
-              } ${getLang() === "ar" ? styles["rtl-screen"] : ""}`
-            }
-        >
-              <>
-                <LoginPage />
-              </>
-        </div>
-    );
-  }
 
   return (
     <div
@@ -180,15 +139,12 @@ function Screen() {
         </>
       ) : (
         <>
-          <SideBar className={isHome ? styles["sidebar-show"] : ""} />
-
+          <button>登錄</button>
+          <AuthPage />
+<Login/>
           <div className={styles["window-content"]} id={SlotID.AppBody}>
             <Routes>
-              <Route path={Path.Home} element={<Chat />} />
-              <Route path={Path.NewChat} element={<NewChat />} />
-              <Route path={Path.Masks} element={<MaskPage />} />
-              <Route path={Path.Chat} element={<Chat />} />
-              <Route path={Path.Settings} element={<Settings />} />
+              <Route path={Path.Login} element={<Login />} />
             </Routes>
           </div>
         </>
@@ -209,7 +165,7 @@ export function useLoadData() {
   }, []);
 }
 
-export function Home() {
+export function User() {
   useSwitchTheme();
   useLoadData();
 
